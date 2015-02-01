@@ -1,0 +1,58 @@
+1) Detect Cycle in a Directed Graph
+===================================
+bool Graph::isCyclicUtil(int v, bool visited[], bool *recStack)
+{
+    if(visited[v] == false)
+    {
+        // Mark the current node as visited and part of recursion stack
+        visited[v] = true;
+        recStack[v] = true;
+ 
+        // Recur for all the vertices adjacent to this vertex
+        list<int>::iterator i;
+        for(i = adj[v].begin(); i != adj[v].end(); ++i)
+        {
+            if ( !visited[*i] && isCyclicUtil(*i, visited, recStack) )
+                return true;
+            else if (recStack[*i])
+                return true;
+        }
+ 
+    }
+    recStack[v] = false;  // remove the vertex from recursion stack
+    return false;
+}
+
+bool Graph::isCyclic()
+{
+    bool *visited = new bool[V];
+    bool *recStack = new bool[V];
+    for(int i = 0; i < V; i++)
+    {
+        visited[i] = false;
+        recStack[i] = false;
+    }
+
+    for(int i = 0; i < V; i++)
+        if (isCyclicUtil(i, visited, recStack))
+            return true;
+ 
+    return false;
+}
+Note:If you dont use rec stack even then it will work 
+but in that case u mighht have to visit a node twice.
+example:
+take this staructure of adjacency matrix
+
+1 2 5
+2 3
+3 4
+4 5
+5 2
+if we use without rec stack:
+1 2 3 4 5 2
+1 5 2 3 4 5
+
+if we use rec stack
+1 2 3 4 5
+1 5 exit
